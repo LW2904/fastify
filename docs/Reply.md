@@ -32,10 +32,10 @@ and properties:
 - `.code(statusCode)` - Sets the status code.
 - `.status(statusCode)` - An alias for `.code(statusCode)`.
 - `.header(name, value)` - Sets a response header.
-- `.getHeader(name)` - Retrieve value of already set header.
+- `.getHeader(name)` - Retrieve value of an already set header.
 - `.removeHeader(key)` - Remove the value of a previously set header.
 - `.hasHeader(name)` - Determine if a header has been set.
-- `.type(value)` - Sets the header `Content-Type`.
+- `.type(value)` - Sets the `Content-Type` header.
 - `.redirect([code,] url)` - Redirect to the specified url, the status code is optional (default to `302`).
 - `.callNotFound()` - Invokes the custom not found handler.
 - `.serialize(payload)` - Serializes the specified payload using the default json serializer or using the custom serializer (if one is set) and returns the serialized payload.
@@ -86,7 +86,7 @@ reply.getHeader('x-foo') // 'foo'
 <a name="getHeader"></a>
 ### .removeHeader(key)
 
-Remove the value of a previously set header.
+Removes the value of a previously set header.
 ```js
 reply.header('x-foo', 'foo')
 reply.removeHeader('x-foo')
@@ -99,7 +99,7 @@ Returns a boolean indicating if the specified header has been set.
 
 <a name="redirect"></a>
 ### .redirect(dest)
-Redirects a request to the specified url, the status code is optional, default to `302` (if status code is not already set by calling `code`).
+Redirects a request to the specified url, the status code is optional (defaults to `302` it's not already set through `code`).
 ```js
 reply.redirect('/home')
 ```
@@ -130,7 +130,7 @@ reply.type('text/html')
 
 <a name="serializer"></a>
 ### .serializer(func)
-`.send()` will by default JSON-serialize any value that is not one of: `Buffer`, `stream`, `string`, `undefined`, `Error`. If you need to replace the default serializer with a custom serializer for a particular request, you can do so with the `.serializer()` utility. Be aware that if you are using a custom serializer, you must set a custom `'Content-Type'` header.
+`.send()` will by default JSON-serialize any value that is not one of: `Buffer`, `stream`, `string`, `undefined`, `Error`. If you need to replace the default serializer with a custom serializer for a particular request, you can do so with the `.serializer()` utility. Be aware that if you are using a custom serializer, you must also set a custom `'Content-Type'` header.
 
 ```js
 reply
@@ -151,13 +151,12 @@ See [`.send()`](#send) for more information on sending different types of values
 <a name="sent"></a>
 ### .sent
 
-As the name suggests, `.sent` is a property to indicate if
-a response has been sent via `reply.send()`.
+`.sent` indicates whether or not a response has been sent via `reply.send()`.
 
 In case a route handler is defined as an async function or it
 returns a promise, it is possible to set `reply.sent = true`
 to indicate that the automatic invocation of `reply.send()` once the
-handler promise resolve should be skipped. By setting `reply.sent =
+handler promise resolves should be skipped. By setting `reply.sent =
 true`, an application claims full responsibility of the low-level
 request and response. Moreover, hooks will not be invoked.
 
@@ -176,7 +175,7 @@ If the handler rejects, the error will be logged.
 
 <a name="send"></a>
 ### .send(data)
-As the name suggests, `.send()` is the function that sends the payload to the end user.
+Sends the payload to the end user.
 
 <a name="send-object"></a>
 #### Objects
@@ -198,7 +197,7 @@ fastify.get('/json', options, function (request, reply) {
 
 <a name="send-streams"></a>
 #### Streams
-*send* can also handle streams out of the box, internally uses [pump](https://www.npmjs.com/package/pump) to avoid leaks of file descriptors. If you are sending a stream and you have not set a `'Content-Type'` header, *send* will set it at `'application/octet-stream'`.
+`send` can also handle streams out of the box, internally it uses [pump](https://www.npmjs.com/package/pump) to avoid leaks of file descriptors. If you are sending a stream and you have not set a `'Content-Type'` header, `send` will set it at `'application/octet-stream'`.
 ```js
 fastify.get('/streams', function (request, reply) {
   const fs = require('fs')
@@ -209,7 +208,7 @@ fastify.get('/streams', function (request, reply) {
 
 <a name="send-buffers"></a>
 #### Buffers
-If you are sending a buffer and you have not set a `'Content-Type'` header, *send* will set it to `'application/octet-stream'`.
+If you are sending a buffer and you have not set a `'Content-Type'` header, `send` will set it to `'application/octet-stream'`.
 ```js
 const fs = require('fs')
 fastify.get('/streams', function (request, reply) {
@@ -221,17 +220,17 @@ fastify.get('/streams', function (request, reply) {
 
 <a name="errors"></a>
 #### Errors
-If you pass to *send* an object that is an instance of *Error*, Fastify will automatically create an error structured as the following:
+If you pass an object to `send` which is an instance of `Error`, Fastify will automatically create an error structured as follows:
 ```js
 {
-  error: String        // the http error message
-  code: String         // the Fastify error code
-  message: String      // the user error message
-  statusCode: Number   // the http status code
+  error: String        // http error message
+  code: String         // Fastify error code
+  message: String      // user error message
+  statusCode: Number   // http status code
 }
 ```
-You can add some custom property to the Error object, such as `headers`, that will be used to enhance the http response.<br>
-*Note: If you are passing an error to `send` and the statusCode is less than 400, Fastify will automatically set it at 500.*
+You can add some custom properties to the `Error` object, such as `headers`, that will be used to enhance the http response.<br>
+*Note: If you are passing an error to `send` and the statusCode is less than 400, Fastify will automatically set it to 500.*
 
 Tip: you can simplify errors by using the [`http-errors`](https://npm.im/http-errors) module or [`fastify-sensible`](https://github.com/fastify/fastify-sensible) plugin to generate errors:
 
@@ -241,15 +240,13 @@ fastify.get('/', function (request, reply) {
 })
 ```
 
-If you want to completely customize the error handling, checkout [`setErrorHandler`](https://github.com/fastify/fastify/blob/master/docs/Server.md#seterrorhandler) API.<br>
+If you want to customize the error handling completely, check out the [`setErrorHandler`](https://github.com/fastify/fastify/blob/master/docs/Server.md#seterrorhandler) API.<br>
 *Note: you are responsibile for logging when customizing the error handler*
-
-API:
 
 ```js
 fastify.setErrorHandler(function (error, request, reply) {
   request.log.warn(error)
-  var statusCode = error.statusCode >= 400 ? error.statusCode : 500
+  const statusCode = error.statusCode >= 400 ? error.statusCode : 500
   reply
     .code(statusCode)
     .type('text/plain')
@@ -257,9 +254,7 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
-The not found errors generated by the router will use the  [`setNotFoundHandler`](https://github.com/fastify/fastify/blob/master/docs/Server.md#setnotfoundhandler)
-
-API:
+The 'Not Found' errors generated by the router will use the handler set through [`setNotFoundHandler`](https://github.com/fastify/fastify/blob/master/docs/Server.md#setnotfoundhandler).
 
 ```js
 fastify.setNotFoundHandler(function (request, reply) {
@@ -297,7 +292,7 @@ fastify.get('/async-await', options, async function (request, reply) {
 })
 ```
 
-Rejected promises default to a `500` HTTP status code. Reject the promise, or `throw` in an `async function`, with an object that has `statusCode` (or `status`) and `message` properties to modify the reply.
+ Reject the promise, or throw in an async function, with an object that has `statusCode` (or `status`) and `message` properties to modify the reply.
 
 ```js
 fastify.get('/teapot', async function (request, reply) => {

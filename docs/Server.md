@@ -20,7 +20,7 @@ If `true` Node.js core's [HTTP/2](https://nodejs.org/dist/latest-v8.x/docs/api/h
 ### `https`
 
 An object used to configure the server's listening socket for TLS. The options
-are the same as the Node.js core
+are the same as for the Node.js core
 [`createServer` method](https://nodejs.org/dist/latest-v8.x/docs/api/https.html#https_https_createserver_options_requestlistener).
 When this property is `null`, the socket will not be configured for TLS.
 
@@ -66,18 +66,17 @@ This can be useful especially if you have some regex based route, protecting you
 <a name="factory-body-limit"></a>
 ### `bodyLimit`
 
-Defines the maximum payload, in bytes, the server is allowed to accept.
+Defines the maximum payload length, in bytes, the server is allowed to accept.
 
 + Default: `1048576` (1MiB)
 
 <a name="factory-on-proto-poisoning"></a>
 ### `onProtoPoisoning`
 
-Defines what action the framework must take when parsing a JSON object
+Defines what action the framework should take when parsing a JSON object
 with `__proto__`. This functionality is provided by
 [bourne](https://github.com/hapijs/bourne).
-See https://hueniverse.com/a-tale-of-prototype-poisoning-2610fa170061
-for more details about prototype poisoning attacks.
+See [this article](https://hueniverse.com/a-tale-of-prototype-poisoning-2610fa170061) for more details about prototype poisoning attacks.
 
 Possible values are `'error'`, `'remove'` and `'ignore'`.
 
@@ -89,7 +88,7 @@ Possible values are `'error'`, `'remove'` and `'ignore'`.
 Fastify includes built-in logging via the [Pino](https://getpino.io/) logger.
 This property is used to configure the internal logger instance.
 
-The possible values this property may have are:
+The values this property may have are:
 
 + Default: `false`. The logger is disabled. All logging methods will point to a
 null logger [abstract-logging](https://npm.im/abstract-logging) instance.
@@ -100,14 +99,11 @@ logger will point to this instance.
 + `object`: a standard Pino [options object](https://github.com/pinojs/pino/blob/c77d8ec5ce/docs/API.md#constructor).
 This will be passed directly to the Pino constructor. If the following properties
 are not present on the object, they will be added accordingly:
-    * `genReqId`: a synchronous function that will be used to generate identifiers
-    for incoming requests. The default function generates sequential identifiers.
+    * `genReqId`: a synchronous function that will be used to generate identifiers for incoming requests. The default function generates sequential identifiers.
     * `level`: the minimum logging level. If not set, it will be set to `'info'`.
     * `serializers`: a hash of serialization functions. By default, serializers
       are added for `req` (incoming request objects), `res` (outgoing response
-      objets), and `err` (standard `Error` objects). When a log method receives
-      an object with any of these properties then the respective serializer will
-      be used for that property. For example:
+      objects), and `err` (standard `Error` objects). When a log method receives an object with any of these properties then the respective serializer will be used for that property. For example:
         ```js
         fastify.get('/foo', function (req, res) {
           req.log.info({req}) // log the serialized request object
@@ -184,13 +180,13 @@ fastify.get('/', (req, reply) => {
 fastify.listen(3000)
 ```
 
-Internally Fastify uses the API of Node core http server, so if you are using a custom server you must be sure to have the same API exposed. If not, you can enhance the server instance inside the `serverFactory` function before the `return` statement.<br/>
+Internally Fastify uses the API of the Node core http server, so if you are using a custom server you must be sure to have the same API exposed. If not, you can enhance the server instance inside the `serverFactory` function before the `return` statement.<br/>
 *Note that we have also added `modifyCoreObjects: false` because in some serverless environments such as Google Cloud Functions, some Node.js core properties are not writable.*
 
 <a name="factory-case-sensitive"></a>
 ### `caseSensitive`
 
-By default, value equal to `true`, routes are registered as case sensitive. That is, `/foo` is not equivalent to `/Foo`. When set to `false`, routes are registered in a fashion such that `/foo` is equivalent to `/Foo` which is equivalent to `/FOO`.
+By default, routes are registered to be case sensitive (ergo `true`). That is, `/foo` is not equivalent to `/Foo`. When set to `false`, routes are registered in a fashion such that `/foo` is equivalent to `/Foo` which is equivalent to `/FOO`.
 
 By setting `caseSensitive` to `false`, all paths will be matched as lowercase, but the route parameters or wildcards will maintain their original letter casing.
 
@@ -294,7 +290,7 @@ const fastify = require('fastify')({
 <a name="versioning"></a>
 ### `versioning`
 
-By default you can version your routes with [semver versioning](https://github.com/fastify/fastify/blob/master/docs/Routes.md#version), which is provided by `find-my-way`. There is still an option to provide custom versioning strategy. You can find more information in the [find-my-way](https://github.com/delvedor/find-my-way#versioned-routes) documentation.
+By default, you can version your routes with [semver versioning](https://github.com/fastify/fastify/blob/master/docs/Routes.md#version), which is provided by `find-my-way`. There is still an option to provide a custom versioning strategy. You can find more information in the [find-my-way](https://github.com/delvedor/find-my-way#versioned-routes) documentation.
 
 ```js
 const versioning = {
@@ -589,9 +585,9 @@ Name of the current plugin. There are three ways to define a name (in order).
 2. If you `module.exports` a plugin the filename is used.
 3. If you use a regular [function declaration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions#Defining_functions) the function name is used.
 
-*Fallback*: The first two lines of your plugin will represent the plugin name. Newlines are replaced by ` -- `. This will help to indentify the root cause when you deal with many plugins.
+*Fallback*: The first two lines of your plugin will represent the plugin name. Newlines are replaced by ` -- `. This will help to identify the root cause when you deal with many plugins.
 
-Important: If you have to deal with nested plugins the name differs with the usage of the [fastify-plugin](https://github.com/fastify/fastify-plugin) because no new scope is created and therefore we have no place to attach contextual data. In that case the plugin name will represent the boot order of all involved plugins in the format of `plugin-A -> plugin-B`.
+Important: If you have to deal with nested plugins the name differs with the usage of the [fastify-plugin](https://github.com/fastify/fastify-plugin) because no new scope is created and therefore we have no place to attach contextual data. In that case, the plugin name will represent the boot order of all involved plugins in the format of `plugin-A -> plugin-B`.
 
 <a name="log"></a>
 #### log
@@ -629,7 +625,7 @@ This property can be used to set the schema compiler, it is a shortcut for the `
 <a name="set-not-found-handler"></a>
 #### setNotFoundHandler
 
-`fastify.setNotFoundHandler(handler(request, reply))`: set the 404 handler. This call is encapsulated by prefix, so different plugins can set different not found handlers if a different [`prefix` option](https://github.com/fastify/fastify/blob/master/docs/Plugins.md#route-prefixing-option) is passed to `fastify.register()`. The handler is treated like a regular route handler so requests will go through the full [Fastify lifecycle](https://github.com/fastify/fastify/blob/master/docs/Lifecycle.md#lifecycle).
+`fastify.setNotFoundHandler(handler(request, reply))`: set the 404 handler. This call is encapsulated by prefix, so different plugins can set different not found handlers if a different [`prefix` option](https://github.com/fastify/fastify/blob/master/docs/Plugins.md#route-prefixing-option) is passed to `fastify.register()`. The handler is treated as a regular route handler so requests will go through the full [Fastify lifecycle](https://github.com/fastify/fastify/blob/master/docs/Lifecycle.md#lifecycle).
 
 You can also register a [`preValidation`](https://www.fastify.io/docs/latest/Hooks/#route-hooks) and [preHandler](https://www.fastify.io/docs/latest/Hooks/#route-hooks) hook for the 404 handler.
 
